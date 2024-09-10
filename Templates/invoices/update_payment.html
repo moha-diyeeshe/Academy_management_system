@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title_block %} Update Payment {% endblock %}
+
+{% block content %}
+<div class="main-content app-content">
+    <div class="container-fluid">
+        <h2 class="page-title">Update Payment</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- Student Field -->
+            <div class="form-group">
+                <label for="student">Student</label>
+                <select name="student" id="student" class="form-control">
+                    <option value="">Select Student</option>
+                    {% for student in students %}
+                        <option value="{{ student.pk }}" 
+                            data-class-name="{{ student.student_class.name }}" 
+                            data-class-id="{{ student.student_class.pk }}" 
+                            {% if student.pk == form.instance.transaction.student.pk %}selected{% endif %}>
+                            {{ student.first_name }} {{ student.last_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Class Field (Non-Editable) -->
+            <div class="form-group">
+                <label for="student_class">Class</label>
+                <input type="text" name="student_class_name" id="student_class_name" class="form-control" value="{{ form.instance.transaction.student_class.name }}" readonly>
+                <input type="hidden" name="student_class" id="student_class" value="{{ form.instance.transaction.student_class.pk }}">
+            </div>
+
+            <!-- Payment Type -->
+            <div class="form-group">
+                <label for="payment_type">Payment Type</label>
+                <select name="payment_type" class="form-control">
+                    <option value="registration" {% if form.instance.payment_type == 'registration' %}selected{% endif %}>Registration Fee</option>
+                    <option value="monthly" {% if form.instance.payment_type == 'monthly' %}selected{% endif %}>Monthly Fee</option>
+                    <option value="certificate" {% if form.instance.payment_type == 'certificate' %}selected{% endif %}>Certificate Fee</option>
+                </select>
+            </div>
+
+            <!-- Amount Paid -->
+            <div class="form-group">
+                <label for="amount_paid">Amount Paid</label>
+                <input type="number" step="0.01" name="amount_paid" id="amount_paid" class="form-control" value="{{ form.instance.amount_paid|default_if_none:'' }}">
+            </div>
+
+            <!-- Discount -->
+            <div class="form-group">
+                <label for="discount">Discount</label>
+                <input type="number" step="0.01" name="discount" id="discount" class="form-control" value="{{ form.instance.discount|default_if_none:'' }}">
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary">Update Payment</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const studentSelect = document.getElementById('student');
+        const classInput = document.getElementById('student_class_name');
+        const classHiddenInput = document.getElementById('student_class');
+
+        // When the student changes, update the class field
+        studentSelect.addEventListener('change', function() {
+            const selectedStudent = this.value;
+
+            if (selectedStudent) {
+                // Get the selected student's class from the data attributes
+                const selectedStudentClassName = studentSelect.options[studentSelect.selectedIndex].dataset.className;
+                const selectedStudentClassId = studentSelect.options[studentSelect.selectedIndex].dataset.classId;
+
+                // Update the visible class name field and the hidden class ID field
+                classInput.value = selectedStudentClassName || '';  // Fallback in case class name is missing
+                classHiddenInput.value = selectedStudentClassId || '';  // Fallback in case class ID is missing
+            } else {
+                classInput.value = '';  // Reset if no student is selected
+                classHiddenInput.value = '';
+            }
+        });
+    });
+</script>
+{% endblock %}

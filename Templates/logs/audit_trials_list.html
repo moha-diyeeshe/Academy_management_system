@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title_block %} Audit Trials {% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="mb-4">Audit Trials</h2>
+
+    <!-- Search Form -->
+    <form action="{% url 'audit_trial_list' %}" method="get" class="form-inline mb-3">
+        <input type="text" name="query" value="{{ query }}" class="form-control mr-2" placeholder="Search by username, action, or module">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <!-- Audit Trials Table -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Action</th>
+                <th>Module</th>
+                <th>Date of Action</th>
+                <th>IP Address</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for audit_trial in page_obj %}
+            <tr>
+                <td>{{ audit_trial.Username }}</td>
+                <td>{{ audit_trial.Actions }}</td>
+                <td>{{ audit_trial.Module }}</td>
+                <td>{{ audit_trial.date_of_action }}</td>
+                <td>{{ audit_trial.ip_address }}</td>
+                <td>
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#detailModal{{ audit_trial.id }}" class="btn btn-sm btn-info">View Details</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No audit trials found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-end">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}&query={{ query }}" tabindex="-1">Previous</a>
+                </li>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+                {% if num == page_obj.number %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num > page_obj.number|add:-3 and num < page_obj.number|add:3 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}&query={{ query }}">{{ num }}</a>
+                    </li>
+                {% elif num == 1 or num == page_obj.paginator.num_pages %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}&query={{ query }}">{{ num }}</a>
+                    </li>
+                {% elif num == page_obj.number|add:-3 or num == page_obj.number|add:3 %}
+                    <li class="page-item">
+                        <span class="page-link">...</span>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}&query={{ query }}">Next</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+</div>
+
+<!-- Audit Details Modals -->
+{% for audit_trial in page_obj %}
+<div class="modal fade" id="detailModal{{ audit_trial.id }}" tabindex="-1" aria-labelledby="detailModalLabel{{ audit_trial.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailModalLabel{{ audit_trial.id }}">Audit Trial Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Username:</strong> {{ audit_trial.Username }}</p>
+                <p><strong>Action:</strong> {{ audit_trial.Actions }}</p>
+                <p><strong>Module:</strong> {{ audit_trial.Module }}</p>
+                <p><strong>Date of Action:</strong> {{ audit_trial.date_of_action }}</p>
+                <p><strong>IP Address:</strong> {{ audit_trial.ip_address }}</p>
+                <p><strong>Operating System:</strong> {{ audit_trial.operating_system }}</p>
+                <p><strong>Browser:</strong> {{ audit_trial.browser }}</p>
+                <p><strong>User Agent:</strong> {{ audit_trial.user_agent }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

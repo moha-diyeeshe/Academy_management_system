@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}
+    Update Class
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-6 offset-xl-3">
+            <div class="card easion-card">
+                <div class="card-header">
+                    <div class="easion-card-title"> Update Class </div>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="form-group">
+                            <label for="name">Class Name</label>
+                            <input type="text" class="form-control {% if form.name.errors %}is-invalid{% endif %}" id="name" name="name" value="{{ form.name.value|default_if_none:'' }}">
+                            {% if form.name.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.name.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="course">Course</label>
+                            <select class="form-control {% if form.course.errors %}is-invalid{% endif %}" id="course" name="course">
+                                <option value="">Select a Course</option>
+                                {% for course in form.course.field.queryset %}
+                                    <option value="{{ course.pk }}" {% if course.pk == form.course.value %}selected{% endif %}>
+                                        {{ course.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            {% if form.course.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.course.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="teacher">Teacher</label>
+                            <select class="form-control {% if form.teacher.errors %}is-invalid{% endif %}" id="teacher" name="teacher">
+                                <option value="">Select a Teacher</option>
+                                {% for teacher in form.teacher.field.queryset %}
+                                    <option value="{{ teacher.pk }}" {% if teacher.pk == form.teacher.value %}selected{% endif %}>
+                                        {{ teacher.first_name }} {{ teacher.last_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            {% if form.teacher.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.teacher.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="scheduled_time">Scheduled Time</label>
+                            <input type="datetime-local" class="form-control {% if form.scheduled_time.errors %}is-invalid{% endif %}" id="scheduled_time" name="scheduled_time" value="{{ form.scheduled_time.value|default_if_none:'' }}">
+                            {% if form.scheduled_time.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.scheduled_time.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Update Class</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

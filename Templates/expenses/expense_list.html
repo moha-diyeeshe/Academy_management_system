@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title_block %} Expense List {% endblock %}
+
+{% block content %}
+<div class="main-content app-content">
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="page-title">Expense List</h2>
+            <a href="{% url 'add_expense' %}" class="btn btn-primary">Add Expense</a>
+        </div>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        <!-- Search and Category Filter -->
+        <form method="GET" action="{% url 'expense_list' %}" class="form-inline mb-3">
+            <input type="text" name="q" value="{{ search_query }}" class="form-control mr-2" placeholder="Search by expense name">
+            
+            <select name="category" class="form-control mr-2">
+                <option value="">All Categories</option>
+                {% for key, value in category_choices %}
+                    <option value="{{ key }}" {% if selected_category == key %}selected{% endif %}>{{ value }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+        <!-- Expense List Table -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Expense Name</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Date Incurred</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in page_obj %}
+                <tr>
+                    <td>{{ expense.expense_name }}</td>
+                    <td>{{ expense.get_category_display }}</td>
+                    <td>${{ expense.amount }}</td>
+                    <td>{{ expense.date_incurred }}</td>
+                    <td>{{ expense.description }}</td>
+                    <td>
+                        <a href="{% url 'update_expense' expense.id %}" class="btn btn-sm btn-warning">Edit</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">No expenses found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Pagination Controls -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-end">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&query={{ query }}" tabindex="-1">Previous</a>
+                    </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if num == page_obj.number %}
+                        <li class="page-item active" aria-current="page">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% elif num > page_obj.number|add:-3 and num < page_obj.number|add:3 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}&query={{ query }}">{{ num }}</a>
+                        </li>
+                    {% elif num == 1 or num == page_obj.paginator.num_pages %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}&query={{ query }}">{{ num }}</a>
+                        </li>
+                    {% elif num == page_obj.number|add:-3 or num == page_obj.number|add:3 %}
+                        <li class="page-item">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&query={{ query }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title_block %} Add Payment {% endblock %}
+
+{% block content %}
+<div class="main-content app-content">
+    <div class="container-fluid">
+        <h2 class="page-title">Add Payment</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="class">Class</label>
+                <select name="transaction_student_class" id="class" class="form-control">
+                    <option value="">Select Class</option>
+                    {% for student_class in classes %}
+                        <option value="{{ student_class.pk }}">{{ student_class.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="student">Student</label>
+                <select name="transaction_student" id="student" class="form-control">
+                    <option value="">Select Student</option>
+                    {% for student in students %}
+                        <option value="{{ student.pk }}" data-class="{{ student.student_class.pk }}">{{ student.first_name }} {{ student.last_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <select name="payment_type" class="form-control" id="id_payment_type">
+                <option value="registration">Registration Fee</option>
+                <option value="monthly">Monthly Fee</option>
+                <option value="certificate">Certificate Fee</option>
+            </select>
+                 
+            <div class="form-group">
+                <label for="amount_paid">Amount Paid</label>
+                <input type="number" step="0.01" name="amount_paid" id="amount_paid" class="form-control" value="{{ form.amount_paid.value|default_if_none:'' }}">
+            </div>
+            <div class="form-group">
+                <label for="discount">Discount</label>
+                <input type="number" step="0.01" name="discount" id="discount" class="form-control" value="{{ form.discount.value|default_if_none:'' }}">
+            </div>
+            <button type="submit" class="btn btn-primary">Add Payment</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{%block extra_script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var classSelect = document.getElementById('class');
+        var studentSelect = document.getElementById('student');
+
+        classSelect.addEventListener('change', function() {
+            var selectedClass = this.value;
+
+            for (var i = 0; i < studentSelect.options.length; i++) {
+                var option = studentSelect.options[i];
+                if (option.dataset.class === selectedClass || !selectedClass) {
+                    option.style.display = '';
+                } else {
+                    option.style.display = 'none';
+                }
+            }
+            studentSelect.value = ''; // Reset student selection
+        });
+
+        studentSelect.addEventListener('change', function() {
+            var selectedStudent = this.value;
+            var selectedClass = this.options[this.selectedIndex].dataset.class;
+
+            if (selectedClass) {
+                classSelect.value = selectedClass;
+            }
+        });
+    });
+</script>
+{% endblock %}

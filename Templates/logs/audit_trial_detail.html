@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title_block %} Audit Trial Details {% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Audit Trial Details</h2>
+
+    <table class="table table-bordered">
+        <tr>
+            <th>Username</th>
+            <td>{{ audit_trial.Username }}</td>
+        </tr>
+        <tr>
+            <th>Action</th>
+            <td>{{ audit_trial.Actions }}</td>
+        </tr>
+        <tr>
+            <th>Module</th>
+            <td>{{ audit_trial.Module }}</td>
+        </tr>
+        <tr>
+            <th>Date of Action</th>
+            <td>{{ audit_trial.date_of_action }}</td>
+        </tr>
+        <tr>
+            <th>IP Address</th>
+            <td>{{ audit_trial.ip_address }}</td>
+        </tr>
+        <tr>
+            <th>Browser</th>
+            <td>{{ audit_trial.browser }}</td>
+        </tr>
+        <tr>
+            <th>Operating System</th>
+            <td>{{ audit_trial.operating_system }}</td>
+        </tr>
+        <tr>
+            <th>Path</th>
+            <td>{{ audit_trial.path }}</td>
+        </tr>
+    </table>
+
+    <a href="{% url 'audit_trial_list' %}" class="btn btn-secondary">Back to Audit Trials</a>
+</div>
+{% endblock %}

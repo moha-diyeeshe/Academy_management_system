@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title_block %} Error Log Detail {% endblock %}
+{% block content %}
+<div class="container">
+    <h2>Error Log Detail</h2>
+    <table class="table table-bordered">
+        <tr>
+            <th>Username</th>
+            <td>{{ error_log.Username }}</td>
+        </tr>
+        <tr>
+            <th>Error Name</th>
+            <td>{{ error_log.Name }}</td>
+        </tr>
+        <tr>
+            <th>Line Number</th>
+            <td>{{ error_log.line_number }}</td>
+        </tr>
+        <tr>
+            <th>Date</th>
+            <td>{{ error_log.date_recorded }}</td>
+        </tr>
+        <tr>
+            <th>Browser</th>
+            <td>{{ error_log.browser }}</td>
+        </tr>
+        <tr>
+            <th>IP Address</th>
+            <td>{{ error_log.ip_address }}</td>
+        </tr>
+        <tr>
+            <th>User Agent</th>
+            <td>{{ error_log.user_agent }}</td>
+        </tr>
+        <tr>
+            <th>Traceback</th>
+            <td>{{ error_log.trace_back }}</td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

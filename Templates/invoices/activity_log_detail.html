@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title_block %} Activity Log Details {% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Activity Log Details</h2>
+
+    <table class="table table-bordered">
+        <tr>
+            <th>User</th>
+            <td>{{ activity_log.user.username }}</td>
+        </tr>
+        <tr>
+            <th>Action</th>
+            <td>{{ activity_log.action }}</td>
+        </tr>
+        <tr>
+            <th>Timestamp</th>
+            <td>{{ activity_log.timestamp }}</td>
+        </tr>
+        <tr>
+            <th>Content Type</th>
+            <td>{{ activity_log.content_type }}</td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>{{ activity_log.description }}</td>
+        </tr>
+    </table>
+
+    <a href="{% url 'activity_log_list' %}" class="btn btn-secondary">Back to Activity Logs</a>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}
+    Update Teacher
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-6 offset-xl-3">
+            <div class="card easion-card">
+                <div class="card-header">
+                    <div class="easion-card-title"> Update Teacher </div>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="form-group">
+                            <label for="first_name">First Name</label>
+                            <input type="text" class="form-control {% if form.first_name.errors %}is-invalid{% endif %}" id="first_name" name="first_name" value="{{ form.first_name.value|default_if_none:'' }}">
+                            {% if form.first_name.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.first_name.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="last_name">Last Name</label>
+                            <input type="text" class="form-control {% if form.last_name.errors %}is-invalid{% endif %}" id="last_name" name="last_name" value="{{ form.last_name.value|default_if_none:'' }}">
+                            {% if form.last_name.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.last_name.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone_number">Phone Number</label>
+                            <input type="text" class="form-control {% if form.phone_number.errors %}is-invalid{% endif %}" id="phone_number" name="phone_number" value="{{ form.phone_number.value|default_if_none:'' }}">
+                            {% if form.phone_number.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.phone_number.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" id="email" name="email" value="{{ form.email.value|default_if_none:'' }}">
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.email.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="profile_photo">Profile Photo</label>
+                            <input type="file" class="form-control-file {% if form.profile_photo.errors %}is-invalid{% endif %}" id="profile_photo" name="profile_photo">
+                            {% if form.profile_photo.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.profile_photo.errors|striptags }}
+                                </div>
+                            {% endif %}
+                            {% if teacher.profile_photo %}
+                                <img src="{{ teacher.profile_photo.url }}" alt="Profile Photo" class="img-thumbnail mt-2" width="100">
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Update Teacher</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}  
+
+{% block title_block %}
+    My Profile - {{ user.get_full_name }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Profile Header -->
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card text-center">
+                <div class="card-body">
+                    <!-- Profile Picture -->
+                    <img src="{{ user.avatar.url }}" alt="Profile Picture" class="rounded-circle" width="150" height="150">
+                    
+                    <!-- Full Name -->
+                    <h3 class="mt-3">{{ user.get_full_name }}</h3>
+                    
+                    <!-- Email -->
+                    <p class="text-muted">{{ user.email }}</p>
+                    
+                    <!-- Phone Number -->
+                    {% if user.phone %}
+                        <p><strong>Phone:</strong> {{ user.phone }}</p>
+                    {% endif %}
+
+              
+
+                    <!-- Gender -->
+                    {% if user.gender %}
+                        <p><strong>Gender:</strong> {{ user.gender }}</p>
+                    {% endif %}
+                    
+                    <!-- Job Title (if exists) -->
+                    {% if user.title %}
+                        <p><strong>Job Title:</strong> {{ user.title }}</p>
+                    {% endif %}
+
+                    <!-- Edit Button -->
+                    <a href="{% url 'edit_profile' %}" class="btn btn-primary mt-3">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

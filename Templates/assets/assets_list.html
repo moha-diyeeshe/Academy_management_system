@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}
+    Asset List
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card easion-card">
+                <div class="card-header">
+                    <div class="easion-card-title"> Assets List </div>
+                    <div class="card-tools">
+                        <a href="{% url 'register_asset' %}" class="btn btn-primary">Register New Asset</a>
+                    </div>
+                </div>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <div class="card-body">
+                    <!-- Search Bar -->
+                    <form method="GET" action="{% url 'asset_list' %}" class="form-inline mb-3">
+                        <input type="text" name="q" value="{{ search_query }}" class="form-control mr-2" placeholder="Search assets">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+
+                    <!-- Asset List Table -->
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Asset Name</th>
+                                <th>Number of Assets</th>
+                                <th>Purchase Date</th>
+                                <th>Purchase Price</th>
+                                <th>Description</th>
+                                <th>Regestered Date</th>
+                                <th>last updated Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for asset in page_obj %}
+                            <tr>
+                                <td>{{ asset.asset_name }}</td>
+                                <td>{{ asset.number_of_assets }}</td>
+                                <td>{{ asset.purchase_date }}</td>
+                                <td>${{ asset.purchase_price }}</td>
+                                <td>{{ asset.description }}</td>
+                                <td>{{ asset.created_at }}</td>
+                                <td>{{ asset.updated_at }}</td>
+                                <td>
+                                    <a href="{% url 'update_asset' asset.id %}" class="btn btn-sm btn-warning">Edit</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6">No assets found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <!-- Pagination Controls -->
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-end">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}&query={{ query }}" tabindex="-1">Previous</a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if num == page_obj.number %}
+                                    <li class="page-item active" aria-current="page">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > page_obj.number|add:-3 and num < page_obj.number|add:3 %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}&query={{ query }}">{{ num }}</a>
+                                    </li>
+                                {% elif num == 1 or num == page_obj.paginator.num_pages %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}&query={{ query }}">{{ num }}</a>
+                                    </li>
+                                {% elif num == page_obj.number|add:-3 or num == page_obj.number|add:3 %}
+                                    <li class="page-item">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}&query={{ query }}">Next</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

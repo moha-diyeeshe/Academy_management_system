@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}
+    Course List
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card easion-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="easion-card-title"> Courses List </div>
+                    <div class="card-tools">
+                        <a href="{% url 'register_course' %}" class="btn btn-primary">Register New Course</a>
+                    </div>
+
+                </div>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <div class="card-body">
+                    <!-- Search Bar -->
+                    <form method="GET" action="{% url 'course_list' %}" class="form-inline mb-3">
+                        <input type="text" name="q" value="{{ search_query }}" class="form-control mr-2" placeholder="Search by name or description">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+
+                    <!-- Course List Table -->
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Duration (Months)</th>
+                                <th>Price per Month</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for course in page_obj %}
+                            <tr>
+                                <td>{{ course.name }}</td>
+                                <td>{{ course.description }}</td>
+                                <td>{{ course.duration_months }}</td>
+                                <td>${{ course.price_per_month }}</td>
+                                <td>
+                                    <a href="{% url 'update_course' course.id %}" class="btn btn-sm btn-warning">Edit</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5">No courses found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <!-- Pagination Controls -->
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-end">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}&query={{ query }}" tabindex="-1">Previous</a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if num == page_obj.number %}
+                                    <li class="page-item active" aria-current="page">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > page_obj.number|add:-3 and num < page_obj.number|add:3 %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}&query={{ query }}">{{ num }}</a>
+                                    </li>
+                                {% elif num == 1 or num == page_obj.paginator.num_pages %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}&query={{ query }}">{{ num }}</a>
+                                    </li>
+                                {% elif num == page_obj.number|add:-3 or num == page_obj.number|add:3 %}
+                                    <li class="page-item">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}&query={{ query }}">Next</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

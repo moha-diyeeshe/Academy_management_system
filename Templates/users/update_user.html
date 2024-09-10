@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title_block %} Update User {% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Update User</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Email Field -->
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" class="form-control" value="{{ form.email.value|default_if_none:'' }}" required>
+            {% if form.email.errors %}
+                <div class="text-danger">{{ form.email.errors }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Phone Field -->
+        <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="text" name="phone" id="phone" class="form-control" value="{{ form.phone.value|default_if_none:'' }}" required>
+            {% if form.phone.errors %}
+                <div class="text-danger">{{ form.phone.errors }}</div>
+            {% endif %}
+        </div>
+
+        <!-- First Name Field -->
+        <div class="form-group">
+            <label for="first_name">First Name</label>
+            <input type="text" name="first_name" id="first_name" class="form-control" value="{{ form.first_name.value|default_if_none:'' }}" required>
+            {% if form.first_name.errors %}
+                <div class="text-danger">{{ form.first_name.errors }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Last Name Field -->
+        <div class="form-group">
+            <label for="last_name">Last Name</label>
+            <input type="text" name="last_name" id="last_name" class="form-control" value="{{ form.last_name.value|default_if_none:'' }}" required>
+            {% if form.last_name.errors %}
+                <div class="text-danger">{{ form.last_name.errors }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Avatar Field -->
+        <div class="form-group">
+            <label for="avatar">Avatar</label>
+            <input type="file" name="avatar" id="avatar" class="form-control-file">
+            {% if form.avatar.errors %}
+                <div class="text-danger">{{ form.avatar.errors }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Gender Field -->
+        <div class="form-group">
+            <label for="gender">Gender</label>
+            <select name="gender" id="gender" class="form-control">
+                <option value="">Select Gender</option>
+                <option value="Male" {% if form.gender.value == 'Male' %}selected{% endif %}>Male</option>
+                <option value="Female" {% if form.gender.value == 'Female' %}selected{% endif %}>Female</option>
+            </select>
+            {% if form.gender.errors %}
+                <div class="text-danger">{{ form.gender.errors }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Is Admin Checkbox -->
+        <div class="form-group form-check">
+            <input type="checkbox" name="is_admin" id="is_admin" class="form-check-input" {% if form.is_admin.value %}checked{% endif %}>
+            <label class="form-check-label" for="is_admin">Is Admin?</label>
+        </div>
+
+        <!-- Is Superuser Checkbox -->
+        <div class="form-group form-check">
+            <input type="checkbox" name="is_superuser" id="is_superuser" class="form-check-input" {% if form.is_superuser.value %}checked{% endif %}>
+            <label class="form-check-label" for="is_superuser">Superuser</label>
+        </div>
+
+        <!-- Title Field -->
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" class="form-control" value="{{ form.title.value|default_if_none:'' }}">
+            {% if form.title.errors %}
+                <div class="text-danger">{{ form.title.errors }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Active Checkbox -->
+        <div class="form-group form-check">
+            <input type="checkbox" name="is_active" id="is_active" class="form-check-input" {% if user.is_active %}checked{% endif %}>
+            <label class="form-check-label" for="is_active">Active</label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Update User</button>
+    </form>
+</div>
+{% endblock %}

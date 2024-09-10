@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title_block %} Add User {% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Add User</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" class="form-control" value="{{ form.email.value|default_if_none:'' }}" required>
+            {% if form.email.errors %}
+                <div class="text-danger">{{ form.email.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="text" name="phone" id="phone" class="form-control" value="{{ form.phone.value|default_if_none:'' }}" required>
+            {% if form.phone.errors %}
+                <div class="text-danger">{{ form.phone.errors }}</div>
+            {% endif %}
+        </div>
+
+        
+        <div class="form-group">
+            <label for="first_name">First Name</label>
+            <input type="text" name="first_name" id="first_name" class="form-control" value="{{ form.first_name.value|default_if_none:'' }}" required>
+            {% if form.first_name.errors %}
+                <div class="text-danger">{{ form.first_name.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="last_name">Last Name</label>
+            <input type="text" name="last_name" id="last_name" class="form-control" value="{{ form.last_name.value|default_if_none:'' }}" required>
+            {% if form.last_name.errors %}
+                <div class="text-danger">{{ form.last_name.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="avatar">Avatar</label>
+            <input type="file" name="avatar" id="avatar" class="form-control-file">
+            {% if form.avatar.errors %}
+                <div class="text-danger">{{ form.avatar.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="gender">Gender</label>
+            <select name="gender" id="gender" class="form-control">
+                <option value="" selected>Select Gender</option>
+                <option value="Male" {% if form.gender.value == 'Male' %}selected{% endif %}>Male</option>
+                <option value="Female" {% if form.gender.value == 'Female' %}selected{% endif %}>Female</option>
+            </select>
+            {% if form.gender.errors %}
+                <div class="text-danger">{{ form.gender.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group form-check">
+            <input type="checkbox" name="is_admin" id="is_admin" class="form-check-input" {% if form.is_admin.value %}checked{% endif %}>
+            <label class="form-check-label" for="is_admin">Is Admin?</label>
+        </div>
+
+        <div class="form-group form-check">
+            <input type="checkbox" name="is_superuser" id="is_superuser" class="form-check-input" {% if form.is_superuser.value %}checked{% endif %}>
+            <label class="form-check-label" for="is_superuser">Is Superuser?</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add User</button>
+    </form>
+</div>
+{% endblock %}

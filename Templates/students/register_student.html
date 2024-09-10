@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}
+    Register Student
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-6 offset-xl-3">
+            <div class="card easion-card">
+                <div class="card-header">
+                    <div class="easion-card-title"> Register Student </div>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="form-group">
+                            <label for="first_name">First Name</label>
+                            <input type="text" class="form-control {% if form.first_name.errors %}is-invalid{% endif %}" id="first_name" name="first_name" value="{{ form.first_name.value|default_if_none:'' }}">
+                            {% if form.first_name.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.first_name.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="last_name">Last Name</label>
+                            <input type="text" class="form-control {% if form.last_name.errors %}is-invalid{% endif %}" id="last_name" name="last_name" value="{{ form.last_name.value|default_if_none:'' }}">
+                            {% if form.last_name.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.last_name.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="text" class="form-control {% if form.phone.errors %}is-invalid{% endif %}" id="phone" name="phone" value="{{ form.phone.value|default_if_none:'' }}">
+                            {% if form.phone.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.phone.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <input type="text" class="form-control {% if form.address.errors %}is-invalid{% endif %}" id="address" name="address" value="{{ form.address.value|default_if_none:'' }}">
+                            {% if form.address.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.address.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reference_name">Reference Name</label>
+                            <input type="text" class="form-control {% if form.reference_name.errors %}is-invalid{% endif %}" id="reference_name" name="reference_name" value="{{ form.reference_name.value|default_if_none:'' }}">
+                            {% if form.reference_name.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.reference_name.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reference_phone">Reference Phone</label>
+                            <input type="text" class="form-control {% if form.reference_phone.errors %}is-invalid{% endif %}" id="reference_phone" name="reference_phone" value="{{ form.reference_phone.value|default_if_none:'' }}">
+                            {% if form.reference_phone.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.reference_phone.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="course">Course</label>
+                            <select class="form-control {% if form.course.errors %}is-invalid{% endif %}" id="course" name="course">
+                                <option value="">Select a Course</option>
+                                {% for course in form.course.field.queryset %}
+                                    <option value="{{ course.pk }}" {% if course.pk == form.course.value %}selected{% endif %}>
+                                        {{ course.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            {% if form.course.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.course.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="student_class">Class</label>
+                            <select class="form-control {% if form.student_class.errors %}is-invalid{% endif %}" id="student_class" name="student_class">
+                                <option value="">Select a Class</option>
+                                {% for student_class in form.student_class.field.queryset %}
+                                    <option value="{{ student_class.pk }}" {% if student_class.pk == form.student_class.value %}selected{% endif %}>
+                                        {{ student_class.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            {% if form.student_class.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.student_class.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="photo">Photo</label>
+                            <input type="file" class="form-control-file {% if form.photo.errors %}is-invalid{% endif %}" id="photo" name="photo">
+                            {% if form.photo.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.photo.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Register Student</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

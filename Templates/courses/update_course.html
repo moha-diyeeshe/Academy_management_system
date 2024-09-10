@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}
+    Update Course
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-6 offset-xl-3">
+            <div class="card easion-card">
+                <div class="card-header">
+                    <div class="easion-card-title"> Update Course </div>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="form-group">
+                            <label for="name">Course Name</label>
+                            <input type="text" class="form-control {% if form.name.errors %}is-invalid{% endif %}" id="name" name="name" value="{{ form.name.value|default_if_none:'' }}">
+                            {% if form.name.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.name.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea class="form-control {% if form.description.errors %}is-invalid{% endif %}" id="description" name="description">{{ form.description.value|default_if_none:'' }}"></textarea>
+                            {% if form.description.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.description.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="duration_months">Duration (Months)</label>
+                            <input type="number" class="form-control {% if form.duration_months.errors %}is-invalid{% endif %}" id="duration_months" name="duration_months" value="{{ form.duration_months.value|default_if_none:'' }}">
+                            {% if form.duration_months.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.duration_months.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="price_per_month">Price per Month</label>
+                            <input type="number" step="0.01" class="form-control {% if form.price_per_month.errors %}is-invalid{% endif %}" id="price_per_month" name="price_per_month" value="{{ form.price_per_month.value|default_if_none:'' }}">
+                            {% if form.price_per_month.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.price_per_month.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Update Course</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

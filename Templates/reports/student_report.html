@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title_block %}Student Payment Report{% endblock %}
+
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'booking_report.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <form action="" method="get" class="form-inline mb-4">
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label text-uppercase" for="search">Search student</label>
+                <input type="text" class="form-control text-uppercase" id="search" name="search" placeholder="Enter student name or number" value="{{ search_query }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label text-uppercase" for="class">Class</label>
+                <select class="form-control text-uppercase" id="class" name="class">
+                    <option value="">Select Class</option>
+                    {% for class in classes %}
+                    <option value="{{ class.id }}" {% if selected_class|stringformat:"s" == class.id|stringformat:"s" %}selected{% endif %}>{{ class.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label text-uppercase" for="startDate">From Date</label>
+                <input type="date" class="form-control text-uppercase" id="startDate" name="startDate" value="{{ start_date|date:'Y-m-d' }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="endDate">To Date</label>
+                <input type="date" class="form-control text-uppercase" id="endDate" name="endDate" value="{{ end_date|date:'Y-m-d' }}">
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary mt-4 text-uppercase">Update Report</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="invoice-container">
+        <div class="header">
+            <img src="{% static 'logo.png' %}" alt="School Logo">
+        </div>
+
+        <div class="invoice-info">
+            <div>
+                <strong>School Name</strong><br>
+                Address: Main Street, City, State<br>
+                Tel: 1234567890
+            </div>
+            <div>
+                <strong>Report Period:</strong><br>
+                From: {{ start_date }}<br>
+                To: {{ end_date }}<br>
+                <strong class="invoice"> Student Payment Report</strong><br>
+            </div>
+        </div>
+
+        <table class="invoice-table text-uppercase">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Student Name</th>
+                    <th>Class</th>
+                    <th>Total Paid</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in page_obj %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ data.first_name }} {{ data.last_name }}</td>
+                    <td>{{ data.student_class.name }}</td>
+                    <td>${{ data.total_paid }}</td>
+                    <td>{{ data.status }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No student payments found for the selected period.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="no-print">
+            <button onclick="printInvoice()">Print Report</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+    function printInvoice() {
+        window.print();
+    }
+</script>
+{% endblock %}

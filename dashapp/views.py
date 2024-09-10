@@ -14,6 +14,9 @@ from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Sum
 
+from django.utils.dateparse import parse_date
+
+
 # Create your views here.
 
 
@@ -840,3 +843,60 @@ def update_expense(request, expense_id):
         log_error(request, e)  # Log any errors
         messages.error(request, "An error occurred while updating the expense.")
         return render(request, 'expenses/update_expense.html', {'form': form, 'expense': expense})
+
+
+
+
+
+
+@login_required
+@permission_required('dashapp.view_student', raise_exception=True)
+def student_report(request):
+    search_query = request.GET.get('search', '')
+    class_filter = request.GET.get('class', '')
+    status_filter = request.GET.get('status', '')
+    start_date = request.GET.get('startDate', '')
+    end_date = request.GET.get('endDate', '')
+
+    try:
+        students_query = Student.objects.filter(status='Active')
+
+        if search_query:
+            students_query = students_query.filter(
+                Q(first_name__icontains=search_query) |
+                Q(last_name__icontains=search_query)
+            )
+        
+        if class_filter:
+            students_query = students_query.filter(student_class__id=class_filter).order_by('-created')
+        
+        if start_date and end_date:
+            start_date = parse_date(start_date)
+            end_date = parse_date(end_date)
+            students_query = students_query.filter(
+                transaction__date_paid__range=(start_date, end_date)
+            )
+
+        paginator = Paginator(students_query, 10)  # Show 10 students per page
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        classes = Glass.objects.all().order_by('-created')  # Assuming you have a model named Class for student classes
+        log_activity(request, action="Viewed Student Report", content_type="Student", object_id=None)
+
+
+
+        return render(request, 'reports/student_report.html', {
+            'page_obj': page_obj,
+            'search_query': search_query,
+            'classes': classes,
+            'selected_class': class_filter,
+            'status_filter': status_filter,
+            'start_date': start_date,
+            'end_date': end_date,
+        })
+    except Exception as e:
+        log_error(request, e)
+        return render(request, 'reports/student_report.html', {
+            'error': 'An error occurred while fetching the student reports.'
+        })

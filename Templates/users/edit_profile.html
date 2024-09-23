@@ -25,7 +25,7 @@
                         <!-- Full Name -->
                         <div class="form-group mb-3">
                             <label for="full_name">Full Name</label>
-                            <input type="text" class="form-control" name="full_name" id="full_name" value="{{ user.get_full_name }}">
+                            <input type="text" class="form-control" name="full_name" id="full_name" value="{{ user.get_full_name }}" readonly>
                         </div>
 
                         <!-- Email (Non-editable) -->
@@ -44,8 +44,8 @@
                         <div class="form-group mb-3">
                             <label for="gender">Gender</label>
                             <select class="form-control" name="gender" id="gender">
-                                <option value="male" {% if user.gender == 'male' %}selected{% endif %}>Male</option>
-                                <option value="female" {% if user.gender == 'female' %}selected{% endif %}>Female</option>
+                                <option value="Male" {% if user.gender == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if user.gender == 'Female' %}selected{% endif %}>Female</option>
                             </select>
                         </div>
 

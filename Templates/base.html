@@ -30,57 +30,108 @@
                 <a href="{% url 'index'%}" class="easion-logo"><i class="fas fa-sun"></i> <span>Easion</span></a>
             </header>
             <nav class="dash-nav-list">
-                <a href="{% url 'index'%}" class="dash-nav-item">
-                    <i class="fas fa-home"></i> Dashboard </a>
-                    <a href="{% url 'asset_list'%}" class="dash-nav-item">
-                        <i class="fas fa-align-justify"></i> Assets </a>
-                <a href="{% url 'teacher_list'%}" class="dash-nav-item ">
-                     <i class="fas fa-user-tie"></i> Teachers </a>
-                <a href="{% url 'student_list'%}" class="dash-nav-item ">
-                    <i class="fas fa-user"></i> students 
+                <!-- Dashboard - No specific permission required -->
+                <a href="{% url 'index' %}" class="dash-nav-item">
+                    <i class="fas fa-home"></i> Dashboard
                 </a>
-                <a href="{% url 'course_list'%}" class="dash-nav-item ">
-                    <i class="fas fa-pen-alt"></i> Courses 
+            
+                <!-- Assets - Check permission to view assets -->
+                {% if perms.dashapp.view_asset %}
+                <a href="{% url 'asset_list' %}" class="dash-nav-item">
+                    <i class="fas fa-align-justify"></i> Assets
                 </a>
-                <a href="{% url 'class_list'%}" class="dash-nav-item ">
-                    <i class="fas fa-landmark"></i> Classes 
-                </a> 
+                {% endif %}
+            
+                <!-- Teachers - Check permission to view teachers -->
+                {% if perms.dashapp.view_teacher %}
+                <a href="{% url 'teacher_list' %}" class="dash-nav-item">
+                    <i class="fas fa-user-tie"></i> Teachers
+                </a>
+                {% endif %}
+            
+                <!-- Students - Check permission to view students -->
+                {% if perms.dashapp.view_student %}
+                <a href="{% url 'student_list' %}" class="dash-nav-item">
+                    <i class="fas fa-user"></i> Students
+                </a>
+                {% endif %}
+            
+                <!-- Courses - Check permission to view courses -->
+                {% if perms.dashapp.view_course %}
+                <a href="{% url 'course_list' %}" class="dash-nav-item">
+                    <i class="fas fa-pen-alt"></i> Courses
+                </a>
+                {% endif %}
+            
+                <!-- Classes - Check permission to view classes -->
+                {% if perms.dashapp.view_glass %}
+                <a href="{% url 'class_list' %}" class="dash-nav-item">
+                    <i class="fas fa-landmark"></i> Classes
+                </a>
+                {% endif %}
+            
+                <!-- Finance Dropdown Menu -->
                 <div class="dash-nav-dropdown">
+                    {% if perms.dashapp.view_payments %}
                     <a href="#!" class="dash-nav-item dash-nav-dropdown-toggle">
-                        <i class="fas fa-donate"></i> Finance </a>
+                        <i class="fas fa-donate"></i> Finance
+                    </a>
+                    {% endif %}
+
                     <div class="dash-nav-dropdown-menu">
-                        <a href="{%url 'payments_list'%}" class="dash-nav-dropdown-item">Receipts</a>
-                        <a href="{%url 'expense_list'%}" class="dash-nav-dropdown-item">Expenses</a>
+                        <a href="{% url 'payments_list' %}" class="dash-nav-dropdown-item">Receipts</a>
+                        {% if perms.dashapp.view_expenses %}
+                        <a href="{% url 'expense_list' %}" class="dash-nav-dropdown-item">Expenses</a>
+                        {% endif %}
                     </div>
                 </div>
+                <!-- Reports Dropdown Menu - Assume permissions need to be defined -->
                 <div class="dash-nav-dropdown">
+                    {% if perms.Users.role_report %}
                     <a href="#!" class="dash-nav-item dash-nav-dropdown-toggle">
-                        <i class="fas fa-file-invoice"></i> Reports </a>
+                        <i class="fas fa-file-invoice"></i> Reports
+                    </a>
+                    {%endif%}
                     <div class="dash-nav-dropdown-menu">
-                        <a href="#" class="dash-nav-dropdown-item">students report</a>
-                        <a href="#" class="dash-nav-dropdown-item">income statement</a>
-                        <a href="#" class="dash-nav-dropdown-item">Teachers Report</a>
-                        <a href="#" class="dash-nav-dropdown-item"></a>
-                    </div>
-                </div>
-                <div class="dash-nav-dropdown">
-                    <a href="#!" class="dash-nav-item dash-nav-dropdown-toggle">
-                        <i class="fas fa-address-card"></i> Users </a>
-                    <div class="dash-nav-dropdown-menu">
-                        <a href="{% url 'user_list'%}" class="dash-nav-dropdown-item">Manage users</a>
-                        <a href="{% url 'group_list' %}" class="dash-nav-dropdown-item">Manage Groups</a>
                         
+                        <a href="#" class="dash-nav-dropdown-item">Students Report</a>
+                        <a href="#" class="dash-nav-dropdown-item">Income Statement</a>
+                        <a href="#" class="dash-nav-dropdown-item">Teachers Report</a>
                     </div>
                 </div>
+            
+                <!-- Users and Groups Management -->
+                 
                 <div class="dash-nav-dropdown">
+                    {% if perms.Users.view_users %}
                     <a href="#!" class="dash-nav-item dash-nav-dropdown-toggle">
-                        <i class="fas fa-info"></i> About </a>
+                        <i class="fas fa-address-card"></i> Users
+                    </a>
+                    {%endif%}
                     <div class="dash-nav-dropdown-menu">
-                        <a href="{% url 'error_log_list'%}"  class="dash-nav-dropdown-item">ERRORS</a>
-                        <a href="{% url 'audit_trial_list'%}"  class="dash-nav-dropdown-item">AUDIT TRAILS</a>
+                        {% if perms.Users.view_users %}
+                        <a href="{% url 'user_list' %}" class="dash-nav-dropdown-item">Manage Users</a>
+                        {% endif %}
+                        {% if perms.Users.view_groups %}
+                        <a href="{% url 'group_list' %}" class="dash-nav-dropdown-item">Manage Groups</a>
+                        {% endif %}
+                    </div>
+                </div>
+            
+                <!-- About Section -->
+                <div class="dash-nav-dropdown">
+                    {% if request.user.is_superuser %}
+                    <a href="#!" class="dash-nav-item dash-nav-dropdown-toggle">
+                        <i class="fas fa-info"></i> About
+                    </a>
+                    {%endif%}
+                    <div class="dash-nav-dropdown-menu">
+                        <a href="{% url 'error_log_list' %}" class="dash-nav-dropdown-item">ERRORS</a>
+                        <a href="{% url 'audit_trial_list' %}" class="dash-nav-dropdown-item">AUDIT TRAILS</a>
                     </div>
                 </div>
             </nav>
+            
         </div>
         <div class="dash-app">
             <header class="dash-toolbar d-flex justify-content-between">

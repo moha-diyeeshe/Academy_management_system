@@ -72,7 +72,10 @@ def user_list(request):
     """
     try:
         search_query = request.GET.get('q', '')
-        users = Users.objects.all()
+        if request.user.is_superuser:
+            users = Users.objects.all()
+        else:
+            users = Users.objects.exclude(is_superuser=True)
 
         # If search query exists, filter users
         if search_query:
@@ -124,6 +127,7 @@ def add_user(request):
                 user = form.save(commit=False)
                 username = user.username
                 password = 'Harsan123'  # The generated password
+                user.user_must_change_password =True
 
                 user.save()
                 log_activity(request, 'added user', 'user', user.id)
@@ -525,6 +529,7 @@ def edit_profile_view(request):
             return redirect('profile')
         else:
             messages.error(request, 'Please correct the errors below.')
+            print(form.errors)
     else:
         form = UserProfileForm(instance=user)
 

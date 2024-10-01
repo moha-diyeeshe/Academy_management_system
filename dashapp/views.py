@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 
 from django.contrib import messages
 from django.utils import timezone
-from django.db.models import Sum
+from django.db.models import Sum,F,FloatField
 
 from django.utils.dateparse import parse_date
 
@@ -32,6 +32,11 @@ def index(request):
     total_revenue = Payment.objects.filter(date_paid__year=current_year, date_paid__month=current_month).aggregate(total=Sum('amount_paid'))['total'] or 0
     total_expenses = Expense.objects.filter(date_incurred__year=current_year, date_incurred__month=current_month).aggregate(total=Sum('amount'))['total'] or 0
 
+
+
+    total_revenue = float(total_revenue) if total_revenue else 0
+    total_expenses = float(total_expenses) if total_expenses else 0
+
     # Monthly revenue and expenses for the bar chart
     months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     monthly_revenue = []
@@ -41,7 +46,6 @@ def index(request):
         monthly_exp = Expense.objects.filter(date_incurred__year=current_year, date_incurred__month=month).aggregate(total=Sum('amount'))['total'] or 0
         monthly_revenue.append(monthly_rev)
         monthly_expenses.append(monthly_exp)
-
 
 
     print("Months:", months)
@@ -859,7 +863,9 @@ def student_report(request):
     end_date = request.GET.get('endDate', '')
 
     try:
-        students_query = Student.objects.filter(status='Active')
+        students_query = Student.objects.filter(status='Active').annotate(
+        total_paid=Sum('transaction__payment__amount_paid')
+    )
 
         if search_query:
             students_query = students_query.filter(
@@ -868,7 +874,7 @@ def student_report(request):
             )
         
         if class_filter:
-            students_query = students_query.filter(student_class__id=class_filter).order_by('-created')
+            students_query = students_query.filter(student_class__id=class_filter)
         
         if start_date and end_date:
             start_date = parse_date(start_date)
@@ -881,8 +887,10 @@ def student_report(request):
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
-        classes = Glass.objects.all().order_by('-created')  # Assuming you have a model named Class for student classes
-        log_activity(request, action="Viewed Student Report", content_type="Student", object_id=None)
+        classes = Glass.objects.all()  # Assuming you have a model named Class for student classes
+        log_activity(request, action="Viewed Student Report by user", content_type="Student", object_id=request.user.id)
+
+        
 
 
 
@@ -900,3 +908,83 @@ def student_report(request):
         return render(request, 'reports/student_report.html', {
             'error': 'An error occurred while fetching the student reports.'
         })
+    
+
+
+
+
+
+
+
+@login_required
+def teacher_report(request):
+    teacher_id = request.GET.get('teacher_id', '')
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+
+    # Adjusting the query to filter by 'monthly' payment type
+    teachers_query = Teacher.objects.annotate(
+        total_earned=Sum(
+            F('glass__student__transaction__payment__amount_paid') * 0.4,
+            output_field=FloatField(),
+            filter=Q(glass__student__transaction__payment__payment_type='monthly')
+        )
+    )
+
+    if teacher_id:
+        teachers_query = teachers_query.filter(id=teacher_id)
+
+    if start_date and end_date:
+        start_date = parse_date(start_date)
+        end_date = parse_date(end_date)
+        # Ensure the date filter also respects the payment type 'monthly'
+        teachers_query = teachers_query.filter(
+            glass__student__transaction__payment__date_paid__range=[start_date, end_date],
+            glass__student__transaction__payment__payment_type='monthly'
+        )
+
+    teachers = Teacher.objects.all()
+    
+    # Debugging output to see the results of the query
+    for teacher in teachers_query:
+        print(f"Teacher: {teacher.first_name}, Total Earned: {teacher.total_earned}")
+
+    return render(request, 'reports/teacher_report.html', {
+        'teachers': teachers,
+        'report_data': teachers_query,
+        'selected_teacher': teacher_id,
+        'start_date': start_date,
+        'end_date': end_date
+    })
+
+
+
+@login_required
+def income_statement_report(request):
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+
+    # Adjusting queries to filter by date if provided
+    payments_query = Payment.objects.all()
+    expenses_query = Expense.objects.all()
+    
+    if start_date and end_date:
+        start_date = parse_date(start_date)
+        end_date = parse_date(end_date)
+        payments_query = payments_query.filter(date_paid__range=[start_date, end_date])
+        expenses_query = expenses_query.filter(date_incurred__range=[start_date, end_date])
+
+    # Summing payments and expenses
+    total_revenue = payments_query.aggregate(total=Sum('amount_paid'))['total'] or 0
+    total_expenses = expenses_query.aggregate(total=Sum('amount'))['total'] or 0
+    expenses_by_category = expenses_query.values('category').annotate(total=Sum('amount')).order_by('-total')
+    net_income = total_revenue-total_expenses
+
+    return render(request, 'reports/income_statement.html', {
+        'net_income':net_income,
+        'total_revenue': total_revenue,
+        'total_expenses': total_expenses,
+        'expenses_by_category': expenses_by_category,
+        'start_date': start_date,
+        'end_date': end_date,
+    })

@@ -13,10 +13,12 @@
     
     <!-- Chart.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     
     <!-- Custom JS -->
     <script src="{% static 'js/chart-js-config.js' %}"></script>
-    {% block extra_css %}  {%endblock%}
+    {% block extra_css %}  {%endblock%}  
     <title>{%block tilte%}{%endblock%}</title>
 </head>
 
@@ -94,9 +96,9 @@
                     {%endif%}
                     <div class="dash-nav-dropdown-menu">
                         
-                        <a href="#" class="dash-nav-dropdown-item">Students Report</a>
-                        <a href="#" class="dash-nav-dropdown-item">Income Statement</a>
-                        <a href="#" class="dash-nav-dropdown-item">Teachers Report</a>
+                        <a href="{% url 'student_report' %}" class="dash-nav-dropdown-item">Students Report</a>
+                        <a href="{% url 'income_statement_report' %}" class="dash-nav-dropdown-item">Income Statement</a>
+                        <a href="{% url 'teacher_report' %}" class="dash-nav-dropdown-item">Teachers Report</a>
                     </div>
                 </div>
             

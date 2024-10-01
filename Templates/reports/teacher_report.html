@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title_block %}Teacher Earnings Report{% endblock %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'booking_report.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <form action="" method="get" class="form-inline mb-4">
+        <div class="row">
+            <div class="col-md-3">
+                <label for="teacher_id" class="form-label">Select Teacher:</label>
+                <select name="teacher_id" id="teacher_id" class="form-control">
+                    <option value="">All Teachers</option>
+                    {% for teacher in teachers %}
+                    <option value="{{ teacher.id }}" {% if teacher.id|stringformat:"s" == selected_teacher %}selected{% endif %}>
+                        {{ teacher.first_name }} {{ teacher.last_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="start_date" class="form-label">Start Date:</label>
+                <input type="date" name="start_date" class="form-control" value="{{ start_date|date:'Y-m-d' }}">
+            </div>
+            <div class="col-md-3">
+                <label for="end_date" class="form-label">End Date:</label>
+                <input type="date" name="end_date" class="form-control" value="{{ end_date|date:'Y-m-d' }}">
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary mt-4">Update Report</button>
+            </div>
+        </div>
+    </form>
+    <div class="invoice-container">
+        <div class="header">
+            <img src="{% static 'logo.png' %}" alt="School Logo">
+        </div>
+
+        <div class="invoice-info">
+            <div>
+                <strong>School Name</strong><br>
+                Address: Main Street, City, State<br>
+                Tel: 1234567890
+            </div>
+            <div>
+                <strong>Report Period:</strong><br>
+                <strong class="invoice"> Teacher Earnings Report</strong><br>
+            </div>
+        </div>
+
+        <table class="invoice-table text-uppercase">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Teacher Name</th>
+                    <th>Total Earned</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for teacher in report_data  %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ teacher.first_name }} {{ teacher.last_name }}</td>
+                    <td>${{ teacher.total_earned|floatformat:2 }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">No earnings found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="no-print">
+            <button onclick="printInvoice()">Print Report</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+    function printInvoice() {
+        window.print();
+    }
+</script>
+{% endblock %}

@@ -29,7 +29,9 @@ urlpatterns = [
     path('expenses/', views.expense_list, name='expense_list'),
     path('expenses/add/', views.add_expense, name='add_expense'),
     path('expenses/update/<int:expense_id>/', views.update_expense, name='update_expense'),
-    path('student-report/', views.student_report, name='student-report'),
+    path('student-report/', views.student_report, name='student_report'),
+    path('teacher-report/', views.teacher_report, name='teacher_report'),
+    path('income-statement-report/', views.income_statement_report, name='income_statement_report'),
 
 
 

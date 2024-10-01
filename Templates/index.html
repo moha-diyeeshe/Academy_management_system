@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
 {% block title %}Dashboard{% endblock %}
+{% block extra_css %} <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{%endblock%}  
 
 {% block content %}
 <div class="container-fluid">
@@ -94,15 +96,13 @@
 {% endblock %}
 
 {% block extra_script %}
-<!-- Include Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script type="application/json" id="months-data">{{ months|json_script }}</script>
-<script type="application/json" id="monthly-revenue-data">{{ monthly_revenue|json_script }}</script>
-<script type="application/json" id="monthly-expenses-data">{{ monthly_expenses|json_script }}</script>
+<script type="application/json" id="months-data">{{ months|json_script:"months-data" }}</script>
+<script type="application/json" id="monthly-revenue-data">{{ monthly_revenue|json_script:"monthly-revenue-data" }}</script>
+<script type="application/json" id="monthly-expenses-data">{{ monthly_expenses|json_script:"monthly-expenses-data" }}</script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var months = JSON.parse(document.getElementById('months-data').textContent);
     var monthlyRevenue = JSON.parse(document.getElementById('monthly-revenue-data').textContent);
     var monthlyExpenses = JSON.parse(document.getElementById('monthly-expenses-data').textContent);

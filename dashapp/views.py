@@ -53,7 +53,7 @@ def index(request):
     print("Monthly Expenses:", monthly_expenses)
 
     # Last 5 activity logs
-    recent_activity_logs = ActivityLog.objects.all().order_by('-timestamp')[:5]
+    recent_activity_logs = ActivityLog.objects.all().order_by('-timestamp')[:15]
 
     context = {
         'total_active_students': total_active_students,
@@ -804,8 +804,8 @@ def add_expense(request):
         if request.method == 'POST':
             form = ExpenseForm(request.POST)
             if form.is_valid():
-                form.save()
-                log_activity(request, 'added expense', 'expense', None)  # Log the activity
+                expense = form.save()
+                log_activity(request, 'added expense', 'expense', object_id=expense.id)  # Log the activity
                 messages.success(request, "Expense added successfully.")
                 return redirect('expense_list')
         else:

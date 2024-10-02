@@ -53,88 +53,76 @@
 
     <!-- Monthly Revenue and Expenses Chart -->
     <div class="row">
-        <div class="col-xl-6">
-            <div class="card">
-                <div class="card-header">Monthly Revenue and Expenses</div>
-                <div class="card-body">
-                    <!-- Set a specific height here -->
-                    <canvas id="revenueExpensesChart" style="height: 400px;"></canvas>
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-header">Revenue and Expenses Breakdown</div>
+                    <div class="card-body">
+                        <canvas id="revenueExpensesPieChart" style="height: 400px;"></canvas>
+                    </div>
                 </div>
-                
             </div>
         </div>
+        
 
-        <!-- Activity Log -->
-        <div class="col-xl-6">
-            <div class="card easion-card">
-                <div class="card-header">
-                    <div class="easion-card-icon">
-                        <i class="fas fa-list"></i>
+            <!-- Activity Log -->
+            <div class="col-xl-6">
+                <div class="card easion-card">
+                    <div class="card-header">
+                        <div class="easion-card-icon">
+                            <i class="fas fa-list"></i>
+                        </div>
+                        <div class="easion-card-title"> Recent Activity Logs </div>
                     </div>
-                    <div class="easion-card-title"> Recent Activity Logs </div>
-                </div>
-                <div class="card-body">
-                    <div class="notifications">
-                        {% for log in recent_activity_logs %}
-                        <a href="#!" class="notification">
-                            <div class="notification-icon">
-                                <i class="fas fa-info-circle"></i>
+                    <div class="card-body">
+                        <div class="notifications">
+                            {% for log in recent_activity_logs %}
+                            <a href="#!" class="notification">
+                                <div class="notification-icon">
+                                    <i class="fas fa-info-circle"></i>
+                                </div>
+                                <div class="notification-text">{{ log.user.get_full_name }} {{ log.action }}</div>
+                                <span class="notification-time">{{ log.timestamp }}</span>
+                            </a>
+                            {% endfor %}
+                            <div class="notifications-show-all">
+                                <a href="{% url 'activity_log_list' %}">Show all</a>
                             </div>
-                            <div class="notification-text">{{ log.user.get_full_name }} {{ log.action }}</div>
-                            <span class="notification-time">{{ log.timestamp }}</span>
-                        </a>
-                        {% endfor %}
-                        <div class="notifications-show-all">
-                            <a href="{% url 'activity_log_list' %}">Show all</a>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+       
     </div>
 </div>
 {% endblock %}
 
 {% block extra_script %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script type="application/json" id="months-data">{{ months|json_script:"months-data" }}</script>
-<script type="application/json" id="monthly-revenue-data">{{ monthly_revenue|json_script:"monthly-revenue-data" }}</script>
-<script type="application/json" id="monthly-expenses-data">{{ monthly_expenses|json_script:"monthly-expenses-data" }}</script>
-
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    var months = JSON.parse(document.getElementById('months-data').textContent);
-    var monthlyRevenue = JSON.parse(document.getElementById('monthly-revenue-data').textContent);
-    var monthlyExpenses = JSON.parse(document.getElementById('monthly-expenses-data').textContent);
-
-    var ctx = document.getElementById('revenueExpensesChart').getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'bar',
+document.addEventListener('DOMContentLoaded', function () {
+    var ctx = document.getElementById('revenueExpensesPieChart').getContext('2d');
+    var myPieChart = new Chart(ctx, {
+        type: 'pie',
         data: {
-            labels: months,
+            labels: ['Revenue', 'Expenses'],
             datasets: [{
-                label: 'Revenue',
-                data: monthlyRevenue,
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }, {
-                label: 'Expenses',
-                data: monthlyExpenses,
-                backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                borderColor: 'rgba(255, 99, 132, 1)',
+                data: [{{ total_revenue }}, {{ total_expenses }}],  // Use actual revenue and expense totals
+                backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(255, 99, 132, 0.6)'],
+                borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
                 borderWidth: 1
             }]
         },
         options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top'
                 }
-            },
-            responsive: true
+            }
         }
     });
 });
 </script>
 {% endblock %}
+
